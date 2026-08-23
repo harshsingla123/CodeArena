@@ -13,7 +13,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors({origin: ENV.CLIENT_URL, credentials: true}));
-app.use("/api/inngest",serve({clint:inngest,functions}))
+app.use("/api/inngest", serve({ client: inngest, functions }));
 
 console.log(ENV.PORT);
 app.get("/health", (req, res) => {
