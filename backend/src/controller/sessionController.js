@@ -38,6 +38,7 @@ export async function getActiveSession(_, res) {
       .populate("host", "name profileImage email clerkId")
       .sort({ createdAt: -1 })
       .limit(20);
+    res.status(200).json({ sessions: session });
 
   } catch (error) {
     console.log("Error in the ActiveSessions controller", error.message);
