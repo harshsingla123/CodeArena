@@ -7,6 +7,7 @@ import {serve} from "inngest/express";
 import { inngest, functions } from "./lib/inngest.js";
 import { clerkMiddleware } from '@clerk/express';
 import chatRoute from "./routes/chatRoutes.js";
+import sessionRoute from "./routes/sessionRoute.js";
 const __dirname = path.resolve();
 
 const app = express();
@@ -18,7 +19,9 @@ app.use(clerkMiddleware({ apiKey: ENV.CLERK_API_KEY }));
 
 
 app.use("/api/inngest", serve({ client: inngest, functions }));
-app.use("/api/chat", chatRoute )
+app.use("/api/chat", chatRoute );
+app.use("/api/session", sessionRoute );
+
 
 
 console.log(ENV.PORT);

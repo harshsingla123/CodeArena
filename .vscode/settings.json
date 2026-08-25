@@ -1,0 +1,22 @@
+{
+  "editor.inlineSuggest.enabled": true,
+  "editor.inlineSuggest.suppressSuggestions": false,
+  "editor.suggestOnTriggerCharacters": true,
+  "editor.acceptSuggestionOnEnter": "on",
+  "editor.quickSuggestions": {
+    "other": "on",
+    "comments": "on",
+    "strings": "on"
+  },
+  "editor.tabCompletion": "on",
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": true,
+    "markdown": true,
+    "javascript": true,
+    "javascriptreact": true,
+    "typescript": true,
+    "typescriptreact": true
+  }
+}
