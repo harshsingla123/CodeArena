@@ -2,52 +2,52 @@ import Session from "../models/Session.js";
 import { streamClient, chatClient } from "../lib/stream.js";
 
 export async function createSession(req, res) {
-    try {
-        const { problem, difficulty } = req.body;
-        const userId = req.user._id;
-        const clerkId = req.user.clerkId;
-        if (!problem || !difficulty) {
-            return res.status(400).json({ message: "Problem and difficulty are required" });
-        }
-        const callId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
-        const session = await Session.create({ problem, difficulty, host: userId, callId });
-        await streamClient.video.call("default", callId).getOrCreate({
-            data: {
-                createdBy: clerkId,
-                custom: { problem, difficulty, sessionId: session._id.toString() } 
-            }
-        });
-
-        chatClient.channel("messaging", callId, {
-            name: `${problem} session`,
-            created_by_id: clerkId,
-         members: [clerkId],
-        })
-        await channel.create();
-
-        res.status(201).json({ message: "Session created successfully", session });
-    } catch (error) {
-        console.error("Error creating session:", error);
-        res.status(500).json({ message: "Error creating session" });
+  try {
+    const { problem, difficulty } = req.body;
+    const userId = req.user._id;
+    const clerkId = req.user.clerkId;
+    if (!problem || !difficulty) {
+      return res.status(400).json({ message: "Problem and difficulty are required" });
     }
+    const callId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+    const session = await Session.create({ problem, difficulty, host: userId, callId });
+    await streamClient.video.call("default", callId).getOrCreate({
+      data: {
+        createdBy: clerkId,
+        custom: { problem, difficulty, sessionId: session._id.toString() }
+      }
+    });
+
+    chatClient.channel("messaging", callId, {
+      name: `${problem} session`,
+      created_by_id: clerkId,
+      members: [clerkId],
+    })
+    await channel.create();
+
+    res.status(201).json({ message: "Session created successfully", session });
+  } catch (error) {
+    console.error("Error creating session:", error);
+    res.status(500).json({ message: "Error creating session" });
+  }
 }
 
 export async function getActiveSession(_, res) {
-    try {
-       const session= await Session.find({status: "active"})
-       .populate("host", "name profileImage email clerkId")
-       .sort({createdAt:-1})
-       .limit(20);
+  try {
+    const session = await Session.find({ status: "active" })
+      .populate("host", "name profileImage email clerkId")
+      .sort({ createdAt: -1 })
+      .limit(20);
 
-    } catch (error) {
-        console.log("Error in the ActiveSessions controller",error.message);
-        res.status(500).json({message:"Internal server error"})
+  } catch (error) {
+    console.log("Error in the ActiveSessions controller", error.message);
+    res.status(500).json({ message: "Internal server error" })
 
-    }
+  }
 }
 
 export async function getMyRecentSessions(req, res) {
-   try {
+  try {
     const userId = req.user._id;
 
     // get sessions where user is either host or participant
@@ -66,7 +66,7 @@ export async function getMyRecentSessions(req, res) {
 }
 
 export async function getSessionById(req, res) {
-     try {
+  try {
     const { id } = req.params;
 
     const session = await Session.findById(id)
@@ -83,7 +83,7 @@ export async function getSessionById(req, res) {
 }
 
 export async function joinSession(req, res) {
-     try {
+  try {
     const { id } = req.params;
     const userId = req.user._id;
     const clerkId = req.user.clerkId;
@@ -117,7 +117,7 @@ export async function joinSession(req, res) {
 }
 
 export async function endSession(req, res) {
-      try {
+  try {
     const { id } = req.params;
     const userId = req.user._id;
 
