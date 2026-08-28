@@ -18,11 +18,11 @@ export async function createSession(req, res) {
       }
     });
 
-    chatClient.channel("messaging", callId, {
+    const channel = chatClient.channel("messaging", callId, {
       name: `${problem} session`,
       created_by_id: clerkId,
       members: [clerkId],
-    })
+    });
     await channel.create();
 
     res.status(201).json({ message: "Session created successfully", session });

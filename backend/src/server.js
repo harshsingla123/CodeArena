@@ -15,12 +15,11 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors({origin: ENV.CLIENT_URL, credentials: true}));
-app.use(clerkMiddleware({ apiKey: ENV.CLERK_API_KEY }));
-
-
+app.use(clerkMiddleware({ secretKey: ENV.CLERK_SECRET_KEY, publishableKey: ENV.CLERK_PUBLISHABLE_KEY }));
 app.use("/api/inngest", serve({ client: inngest, functions }));
-app.use("/api/chat", chatRoute );
-app.use("/api/session", sessionRoute );
+app.use("/api/chat", chatRoute);
+app.use("/api/sessions", sessionRoute);
+app.use("/api/session", sessionRoute);
 
 
 
