@@ -1,5 +1,5 @@
 import Session from "../models/Session.js";
-import { streamClient, chatClient } from "../lib/stream.js";
+import { streamClient, chatClient, upsertStreamUser } from "../lib/stream.js";
 
 export async function createSession(req, res) {
   try {
@@ -9,11 +9,18 @@ export async function createSession(req, res) {
     if (!problem || !difficulty) {
       return res.status(400).json({ message: "Problem and difficulty are required" });
     }
+
+    await upsertStreamUser({
+      id: clerkId,
+      name: req.user.name,
+      image: req.user.profileImage,
+    });
+
     const callId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
     const session = await Session.create({ problem, difficulty, host: userId, callId });
     await streamClient.video.call("default", callId).getOrCreate({
       data: {
-        createdBy: clerkId,
+        created_by_id: clerkId,
         custom: { problem, difficulty, sessionId: session._id.toString() }
       }
     });
@@ -28,7 +35,7 @@ export async function createSession(req, res) {
     res.status(201).json({ message: "Session created successfully", session });
   } catch (error) {
     console.error("Error creating session:", error);
-    res.status(500).json({ message: "Error creating session" });
+    res.status(500).json({ message: error.message || "Error creating session" });
   }
 }
 
@@ -106,6 +113,12 @@ export async function joinSession(req, res) {
 
     session.participant = userId;
     await session.save();
+
+    await upsertStreamUser({
+      id: clerkId,
+      name: req.user.name,
+      image: req.user.profileImage,
+    });
 
     const channel = chatClient.channel("messaging", session.callId);
     await channel.addMembers([clerkId]);

@@ -7,13 +7,12 @@ if (!apiKey || !apiSecret) { throw new Error("STREAM_API_KEY and STREAM_API_SECR
 export const chatClient = StreamChat.getInstance(apiKey, apiSecret);
 export const streamClient = new StreamClient(apiKey, apiSecret);
 export const upsertStreamUser = async ( userData ) => {
-
     try {
         await chatClient.upsertUser(userData);
+        await streamClient.upsertUsers([userData]);
         console.log(`User with ID ${userData.id} upserted successfully.`);
     } catch (error) {
         console.error("Error upserting Stream user:", error);
-        
     }
 };
 export const deleteStreamUser = async ( userID ) => {
